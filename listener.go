@@ -3,7 +3,6 @@ package nattraversal
 import (
 	"context"
 	"fmt"
-	"net"
 
 	"github.com/go-i2p/logger"
 )
@@ -42,7 +41,7 @@ func ListenContext(ctx context.Context, port int) (*NATListener, error) {
 		return nil, fmt.Errorf("context cancelled after mapping: %w", err)
 	}
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	listener, err := listenTCPContext(ctx, port)
 	if err != nil {
 		mapper.UnmapPort("TCP", externalPort)
 		log.WithError(err).WithField("port", port).Error("failed to bind TCP listener")
@@ -131,7 +130,7 @@ func ListenWithFallbackContext(ctx context.Context, port int) (*NATListener, err
 	}
 
 	// NAT traversal failed, fall back to standard listener
-	listener, listenErr := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	listener, listenErr := listenTCPContext(ctx, port)
 	if listenErr != nil {
 		log.WithError(listenErr).WithField("port", port).Error("fallback TCP listener creation failed")
 		return nil, fmt.Errorf("failed to create fallback listener: %w (NAT error: %v)", listenErr, err)

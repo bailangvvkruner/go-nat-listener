@@ -21,7 +21,7 @@ func createTCPMappingContext(ctx context.Context, port int) (PortMapper, int, er
 		return nil, 0, err
 	}
 
-	mapper, err := NewPortMapperContext(ctx)
+	mapper, err := NewTCPPortMapperContext(ctx)
 	if err != nil {
 		log.WithError(err).WithField("port", port).Error("failed to create port mapper for TCP")
 		return nil, 0, err
